@@ -1,6 +1,8 @@
 import flet as ft
-from UI.alert import AlertManager
+from flet.controls.core import list_view
 
+from UI import controller
+from UI.alert import AlertManager
 '''
     VIEW:
     - Rappresenta l'interfaccia utente
@@ -14,8 +16,9 @@ class View:
         self.page.title = "Lab07"
         self.page.horizontal_alignment = "center"
         self.page.theme_mode = ft.ThemeMode.DARK
-
-        # Alert
+        self.dd = None
+        self.dd1 = None
+        self.list_view = None        # Alert
         self.alert = AlertManager(page)
 
         # Controller
@@ -36,10 +39,24 @@ class View:
         self.txt_titolo = ft.Text(value="Biblioteche di Torino", size=38, weight=ft.FontWeight.BOLD)
 
         # --- Sezione 2: Filtraggio ---
-        # TODO
+        self.dd = ft.Dropdown(label="Biblioteca", width=250)
+        biblioteche = self.controller.get_biblioteche()
 
+        self.dd.options.append(ft.DropdownOption(key="", text="all"))
+        for b in biblioteche:
+            self.dd.options.append(ft.DropdownOption(key=f"{b.id}", text=f"{b}"))
+
+        self.dd1 = ft.Dropdown(label="Genere", width=250)
+        generi = self.controller.get_generi()
+        self.dd1.options.append(ft.DropdownOption(key="", text="all"))
+        for g in generi:
+            self.dd1.options.append(ft.DropdownOption(key=f"{g}", text=f"{g}"))
+        row = ft.Row([self.dd, self.dd1],
+                     alignment=ft.MainAxisAlignment.CENTER)
+        bg_sel = ft.Button(content="Selected books",
+                            on_click=self.controller.handler_bg_sel)
         # Sezione 3: Libri
-        # TODO
+        self.list_view = ft.ListView(expand=True, spacing=10, padding=10)
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -53,12 +70,15 @@ class View:
             ft.Divider(),
 
             # Sezione 2: Filtraggio
-            # TODO
+            row,
+
+            ft.Divider(),
+            bg_sel,
 
             # Sezione 3: Libri
-            # TODO
+            self.list_view
         )
-
+        # list_view.controls.append(ft.Text("Ciao"))
         self.page.scroll = "adaptive"
         self.page.update()
 
@@ -67,3 +87,4 @@ class View:
         self.page.theme_mode = ft.ThemeMode.DARK if self.toggle_cambia_tema.value else ft.ThemeMode.LIGHT
         self.toggle_cambia_tema.label = "Tema scuro" if self.toggle_cambia_tema.value else "Tema chiaro"
         self.page.update()
+

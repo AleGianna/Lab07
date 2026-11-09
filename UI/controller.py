@@ -1,5 +1,4 @@
 import flet as ft
-from UI.view import View
 from model.model import Model
 
 '''
@@ -18,10 +17,24 @@ class Controller:
         self.genere_selezionato = None
 
     # POPOLA DROPDOWN
-    # TODO
+    def get_biblioteche(self):
+        biblioteche = self._model.get_biblioteche()
+        return biblioteche
+    def get_generi(self):
+        generi = self._model.get_generi()
+        return generi
 
     # CALLBACKS DROPDOWN
-    # TODO
+    def handler_bg_sel(self):
+        b = self._view.dd.value
+        g = self._view.dd1.value
+
+
+        result = self._model.get_libri_filtrati(b,g)
+        self._view.list_view.controls.clear()
+        self._view.list_view.controls.append(ft.Text(f"selected: {len(result)}"))
+        for l in result:
+            self._view.list_view.controls.append(ft.Text(f"{l}"))
+        self._view.update()
 
     # AZIONE: MOSTRA LIBRI
-    # TODO
